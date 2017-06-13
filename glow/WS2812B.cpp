@@ -1,12 +1,20 @@
 #include "WS2812B.hpp"
 
-glow::WS2812B::WS2812B(int numLEDs):
+glow::WS2812B::WS2812B():
+    dataPin(hwlib::target::pins::d6),
+    numLEDs(1)
+{
+    // Fill the color array with 0,0,0 rgb values
+    clear();
+}
+
+glow::WS2812B::WS2812B(hwlib::target::pin_out dataPin, int numLEDs):
+    dataPin(dataPin),
     numLEDs(numLEDs)
 {
     // The number of leds can't be zero or less
     if (numLEDs < 1) numLEDs = 1;
 
-    colors[numLEDs];
     // Fill the color array with 0,0,0 rgb values
     clear();
 }
@@ -18,13 +26,17 @@ void glow::WS2812B::setPixelColor(int index, BYTE red, BYTE green, BYTE blue) {
     c.setBlue(blue);
 }
 
+void glow::WS2812B::setPixelColor(int index, const Color& color) {
+    colors[index] = color;
+}
+
 glow::Color glow::WS2812B::getPixelColor(int index) const {
     return colors[index];
 }
 
 void glow::WS2812B::clear() {
     for (int i = 0; i < numLEDs; ++i) {
-        colors[i] = Color(0,0,0);
+        colors[i] = Color();
     }
 }
 
@@ -37,14 +49,15 @@ void glow::WS2812B::update() {
     // because we don't have the time for that
     // We loop through every led and then add every bit in the tree color bytes to the bits array,
     // So for one led we have 24 bits (1 * 3 * 8) and for two we have 48 bits (2 * 3 * 8 etc...
+    int index = 0;
     bool bits[numBits];
     for (int i = 0; i < numLEDs; ++i) {
         // Get the current color
         const Color& cur = colors[i];
-        int index = i * 8;
 
         // For all three bytes
         for (short j = 0; j < 3; ++j) {
+//            int index = i * j * 8 + j * 8; // This does not work with multiple leds
             BYTE curColor;
             if (j % 3 == 0) { curColor = cur.getGreen(); } // First iteration is the green byte
             else if (j % 3 == 1) { curColor = cur.getRed(); } // Second iteration is the red byte
@@ -66,17 +79,41 @@ void glow::WS2812B::update() {
             bits[index + 5] = ((curColor & 0B00000100) && 0B00000100); // bit 2
             bits[index + 6] = ((curColor & 0B00000010) && 0B00000010); // bit 1
             bits[index + 7] = ((curColor & 0B00000001) && 0B00000001); // bit 0 (lsb)
+            index += 8;
+        } // End color bytes loop
+    } // End leds loop
+
+    // ONLY DO THIS ON DEBUG MODE
+//    hwlib::cout << "--BEGIN STREAM--" << hwlib::endl << hwlib::endl;
+//
+//    for (int i = 0; i < numBits; ++i) {
+//        hwlib::cout << bits[i] << " ";
+//
+//        if ((i + 1) % 8 == 0) hwlib::cout << hwlib::endl;
+//        if ((i + 1) % (8 * 3) == 0) hwlib::cout << hwlib::endl;
+//    }
+//
+//    hwlib::cout << "--END STREAM--" << hwlib::endl;
+    // ^^^^
+
+
+    // Send the data to the chip, this is done by setting the pins high and then low for a certain time
+    // Because this needs to be done insanely fast, we create small delays with inline asembly
+    // (which are defined macros in the header files)
+    // TODO: add more info
+    bool* p = bits;
+    int n = numBits;
+    do {
+        if (*p++) {
+            dataPin.set(1);
+            GLOW_WAIT_T1H();
+            dataPin.set(0);
+            GLOW_WAIT_T1L();
+        } else {
+            dataPin.set(1);
+            GLOW_WAIT_T0H();
+            dataPin.set(0);
+            GLOW_WAIT_T0L();
         }
-
-        hwlib::cout << "--BEGIN STREAM--" << hwlib::endl << hwlib::endl;
-
-        for (int i = 0; i < numBits; ++i) {
-            hwlib::cout << bits[i] << " ";
-
-            if ((i + 1) % 8 == 0) hwlib::cout << hwlib::endl;
-            if ((i + 1) % (8 * 3) == 0) hwlib::cout << hwlib::endl;
-        }
-
-        hwlib::cout << "--END STREAM--" << hwlib::endl;
-    }
+    } while(--n);
 }
