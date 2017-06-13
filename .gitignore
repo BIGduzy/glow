@@ -1,0 +1,13 @@
+.codelite/*
+__codelite.*
+*/_codelite.*
+.clang
+update_codelite_workspace.bat
+*/*.mk
+*.o
+*.exe
+*.elf
+*.bin
+*.ld
+*.map
+*/bmptk*
