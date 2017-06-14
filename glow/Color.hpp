@@ -11,8 +11,12 @@ private:
     BYTE green = 0;
     BYTE blue = 0;
 public:
-    Color();
-    Color(BYTE red, BYTE green, BYTE blue);
+    Color():
+        red(0), green(0), blue(0)
+    {};
+    Color(BYTE red, BYTE green, BYTE blue):
+        red(red), green(green), blue(blue)
+    {};
     // Getters & setters
     inline BYTE getRed() const { return red; };
     inline void setRed(const BYTE& newValue) { red = newValue; };
