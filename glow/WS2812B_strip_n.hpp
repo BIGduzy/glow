@@ -31,19 +31,29 @@ typedef unsigned char BYTE;
 #define GLOW_WAIT_T1H() __asm__ volatile("nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t""nop\n\t")
 #define GLOW_WAIT_T1L()  // No need to wait, since going back to the beginning of the loop takes long enough
 
+/**
+ * @class WS2812B_strip_n
+ * @author Nick
+ * @date 14/06/2017
+ * @file WS2812B_strip_n.hpp
+ * @brief template class for the WS2812B LED strip
+ */
 template<int NUMBER_OF_LEDS>
 class WS2812B_strip_n {
 private:
+    /* The data pin */
     hwlib::target::pin_out dataPin;
+    /* The number of LEDs */
     int numLEDs = NUMBER_OF_LEDS;
+    /* Array with color objects containing the color data for every LED */
     Color colors[NUMBER_OF_LEDS];
 
-    public:
+public:
     /**
      * @brief Default constructor
      *
      * @details
-     * Sets data pin to d6 and the number of LEDs to 1, then fills colors array with 0,0,0 RGB values
+     * Sets data pin to d6, the number of LEDs and then fills colors array with 0,0,0 RGB values
      */
     WS2812B_strip_n():
         dataPin(hwlib::target::pins::d6),
@@ -57,7 +67,7 @@ private:
      * @param numLEDs the number of leds in the strip
      *
      * @details
-     * Sets data pin and number of LEDs and fills colors array with 0,0,0 RGB values
+     * Sets data pin, the number of LEDs and then fills colors array with 0,0,0 RGB values
      */
     WS2812B_strip_n(hwlib::target::pin_out dataPin):
         dataPin(dataPin),
@@ -70,26 +80,61 @@ private:
         clear();
     }
 
+    // ***************
     // Getters/setters
+    // ***************
+    /**
+     * @brief Sets The color for a single LED pixel
+     * @param index The index number of the LED pixel (we count from 0)
+     * @param red The red value, 0 - 255
+     * @param green The green value, 0 - 255
+     * @param blue The red value, 0 - 255
+     */
     void setPixelColor(int index, BYTE red, BYTE green, BYTE blue) {
         glow::Color& c = colors[index];
         c.setRed(red);
         c.setGreen(green);
         c.setBlue(blue);
     };
+    /**
+     * @brief Sets the color for a single LED pixel
+     * @param index The index number of the LED pixel (we count from 0)
+     * @param color glow::Color Object with RGB values
+     */
     void setPixelColor(int index, const Color& color) {
         colors[index] = color;
     };
+    /**
+     * @brief Returns the color for a single LED pixel
+     * @param index The index number of the LED pixel (we count from 0)
+     * @return Object with the RGB values
+     */
     Color getPixelColor(int index) const {
         return colors[index];
     };
 
+    // *******************
+    // END Getters/setters
+    // *******************
+
+    /**
+     * @brief Turns every LED pixel in the LED strip off
+     *
+     * @details
+     * Loops through every color in the color array and sets the RGB values to 0,0,0
+     */
     void clear() {
         for (int i = 0; i < numLEDs; ++i) {
-            colors[i] = Color();
+            colors[i] = Color(); // Colors default constructor had 0,0,0 RGB values
         }
     };
 
+    /**
+     * @brief "Renders" the LED strip
+     *
+     * @details
+     * Calculates the bits that need to be send (based on color) and then sends the bits to te WS2812B strip
+     */
     void update() {
         // Every led has 3 bytes, green, red and blue (the WS2812B is in GRB order instead of RGB)
         int numBytes = numLEDs * 3;
@@ -133,13 +178,27 @@ private:
         } // End leds loop
 
 
-        debugPrintStream(numBits, bits); // This is only done in debug modus, see the macro at the top of this file
+        debugPrintStream(numBits, bits); // This is only done in debug modus, see the macro at the top of the file
 
 
         // Send the data to the chip, this is done by setting the pins high and then low for a certain time
         // Because this needs to be done insanely fast, we create small delays with inline asembly
         // (which are defined macros in the header files)
-        // TODO: add more info
+        // The chip is controlled by sending 24 bits for every LED (3 bytes for every color):
+        // |G7|G6|G5|G4|G3|G2|G1|G0|R7|R6|R5|R4|R3|R2|R1|R0|B7|B6|B5|B4|B3|B2|B1|B0|
+        //
+        // | T0H | 0 code ,high voltage time | 0.4us      | ±150ns |
+        // | T1H | 1 code ,high voltage time | 0.8us      | ±150ns |
+        // | T0L | 0 code , low voltage time | 0.85us     | ±150ns |
+        // | T1L | 1 code ,low voltage time  | 0.45us     | ±150ns |
+        // | RES |     low voltage time      | Above 50µs |        |
+        //
+        // 0 Code:                      1 Code:
+        //  _______                    _____________
+        // |       |     T0L     |    |             |  T1L  |
+        // | <---> | <---------> |    | <---------> | <---> |
+        // |  T0H  |_____________|    |     T0L     |_______|
+        // For more information see the datasheet (https://cdn-shop.adafruit.com/datasheets/WS2812B.pdf)
         bool* p = bits;
         int n = numBits;
         do {
