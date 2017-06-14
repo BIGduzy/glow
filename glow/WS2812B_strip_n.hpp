@@ -130,6 +130,36 @@ public:
     };
 
     /**
+     * @brief Makes the color of every LED pixel brighter
+     * @param strength How much to increase the brightness, 0 - 255
+     */
+    void brighten(const BYTE& strength = 1) {
+        for (int i = 0; i < numLEDs; ++i) {
+            colors[i].brighten(strength);
+        }
+    }
+
+    /**
+     * @brief Makes the color of every LED pixel darker (less bright, since LEDs can't be black)
+     * @param strength How much to decrease the brightness, 0 - 255
+     */
+    void darken(const BYTE& strength = 1) {
+        for (int i = 0; i < numLEDs; ++i) {
+            colors[i].darken(strength);
+        }
+    }
+
+    /**
+     * @brief Inverts the color of every LED pixel
+     */
+    void invert() {
+        for (int i = 0; i < numLEDs; ++i) {
+            colors[i].invert();
+        }
+    }
+
+
+    /**
      * @brief "Renders" the LED strip
      *
      * @details

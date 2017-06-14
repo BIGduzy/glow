@@ -1,6 +1,6 @@
 #ifndef GLOW_COLOR_HPP
 #define GLOW_COLOR_HPP
-
+#include <algorithm>
 
 namespace glow {
 typedef unsigned char BYTE;
@@ -63,6 +63,40 @@ public:
      * @brief Setter for red value
      */
     inline void setBlue(const BYTE& newValue) { blue = newValue; };
+    // *********************
+    // END Getters & setters
+    // *********************
+
+    /**
+     * @brief Makes color brighter
+     * @param strength How much to increase the brightness, 0 - 255
+     */
+    void brighten(const BYTE& strength = 1) {
+        red = std::min(red + strength, 255); // Prevent overflow of variable
+        green = std::min(green + strength, 255); // Prevent overflow of variable
+        blue = std::min(blue + strength, 255); // Prevent overflow of variable
+
+    }
+
+    /**
+     * @brief Makes color darker
+     * @param strength How much to decrease the brightness, 0 - 255
+     */
+    void darken(const BYTE& strength = 1) {
+        red = std::max(red - strength, 0); // Prevent underflow of variable
+        green = std::max(green - strength, 0); // Prevent underflow of variable
+        blue = std::max(blue - strength, 0); // Prevent underflow of variable
+    }
+
+    /**
+     * @brief Inverts color
+     */
+    void invert() {
+        // Invert every color byte with the bitwise NOT
+        red = ~red;
+        green = ~green;
+        blue = ~blue;
+    }
 };
 
 }

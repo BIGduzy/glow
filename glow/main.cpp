@@ -1,5 +1,5 @@
 #include <hwlib.hpp>
-#include "WS2812B_strip_n.hpp"
+#include "glow.hpp"
 
 int main( void ){
     // Wait a bit for the console to start up
@@ -21,16 +21,32 @@ int main( void ){
     bool dir = 1;
     while(true) {
         // Simple code for led pattern
-        if ((dir && i == max - 1) || (!dir && i == min)) dir = !dir;
-        if (dir) ++i;
-        else --i;
+        if ((dir && i == max - 1) || (!dir && i == min)) {
+            dir = !dir;
 
-        ledStrip.setPixelColor(i, 40, 0, i);
-        ledStrip.setPixelColor(max - i, 40, i, 0);
+//            for (int j = 0; j < numLeds; ++j) {
+//                glow::Color tmp = ledStrip.getPixelColor(j);
+//                if ((dir + j) & 1) tmp.invert(); // invert all even
+//
+//                ledStrip.setPixelColor(j, tmp);
+//            }
+        }
+
+        if (dir) {
+            ++i;
+//            ledStrip.brighten(4);
+        }
+        else {
+            --i;
+//            ledStrip.darken(4);
+        }
+
+        ledStrip.setPixelColor(i, 40, 0, 0);
+        ledStrip.setPixelColor(max - i, 0, 40, 40);
 
         ledStrip.update();
         ledStrip.clear();
-        hwlib::wait_ms(100); // Wait a sec
+        hwlib::wait_ms(100); // Wait a bit
     }
 
 }
