@@ -9,10 +9,10 @@
 #############################################################################
 
 # source files in this project (main.cpp is automatically assumed)
-SOURCES := WS2812B.cpp Color.cpp
+SOURCES := Color.cpp
 
 # header files in this project
-HEADERS := WS2812B.hpp Color.hpp
+HEADERS := WS2812B_strip_n.hpp Color.hpp
 
 # other places to look for files for this project
 SEARCH  :=

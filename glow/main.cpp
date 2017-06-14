@@ -1,5 +1,5 @@
 #include <hwlib.hpp>
-#include "WS2812B.hpp"
+#include "WS2812B_strip_n.hpp"
 
 int main( void ){
     // Wait a bit for the console to start up
@@ -12,11 +12,8 @@ int main( void ){
 
     auto dataPin = hwlib::target::pin_out(hwlib::target::pins::d6);
 
-    int numLeds = 16;
-    glow::WS2812B ledStrip(dataPin, numLeds);
-    ledStrip.setPixelColor(0, 0, 0, 0);
-
-
+    const int numLeds = 60;
+    glow::WS2812B_strip_n<numLeds> ledStrip(dataPin);
 
     int i = 0;
     int max = numLeds;
@@ -28,8 +25,8 @@ int main( void ){
         if (dir) ++i;
         else --i;
 
-        ledStrip.setPixelColor(i, 40, 0, 40);
-        ledStrip.setPixelColor(max - i, 0, 40, 0);
+        ledStrip.setPixelColor(i, 40, 0, i);
+        ledStrip.setPixelColor(max - i, 40, i, 0);
 
         ledStrip.update();
         ledStrip.clear();
