@@ -62,6 +62,7 @@ public:
         // Fill the color array with 0,0,0 rgb values
         clear();
     };
+
     /**
      * @brief Constructor
      * @param numLEDs the number of leds in the strip
@@ -78,7 +79,7 @@ public:
 
         // Fill the color array with 0,0,0 rgb values
         clear();
-    }
+    };
 
     // ***************
     // Getters/setters
@@ -96,6 +97,7 @@ public:
         c.setGreen(green);
         c.setBlue(blue);
     };
+
     /**
      * @brief Sets the color for a single LED pixel
      * @param index The index number of the LED pixel (we count from 0)
@@ -104,6 +106,7 @@ public:
     void setPixelColor(int index, const Color& color) {
         colors[index] = color;
     };
+
     /**
      * @brief Returns the color for a single LED pixel
      * @param index The index number of the LED pixel (we count from 0)
@@ -137,7 +140,7 @@ public:
         for (int i = 0; i < numLEDs; ++i) {
             colors[i].brighten(strength);
         }
-    }
+    };
 
     /**
      * @brief Makes the color of every LED pixel darker (less bright, since LEDs can't be black)
@@ -147,7 +150,7 @@ public:
         for (int i = 0; i < numLEDs; ++i) {
             colors[i].darken(strength);
         }
-    }
+    };
 
     /**
      * @brief Inverts the color of every LED pixel
@@ -156,7 +159,7 @@ public:
         for (int i = 0; i < numLEDs; ++i) {
             colors[i].invert();
         }
-    }
+    };
 
 
     /**
@@ -172,10 +175,28 @@ public:
 
         // We first add the values of every bit to an array, this can't be done in the for loop that sets the pins
         // because we don't have the time for that
-        // We loop through every led and then add every bit in the tree color bytes to the bits array,
+        bool bits[numBits];
+        setBits(bits);
+
+        debugPrintStream(numBits, bits); // This is only done in debug modus, see the macro at the top of the file
+
+        // Send the data to the chip
+        sendBits(numBits, bits);
+    };
+
+// *****************
+// Private functions
+// *****************
+private:
+
+    /**
+     * @brief Calculates the bits 24 bits for every LED pixel based on the RGB value and puts them in the bit array
+     * @param bits array with 24 * number of LEDs length
+     */
+    void setBits(bool bits[]) {
+        // We loop through every led and then add every bit in the three color bytes to the bits array,
         // So for one led we have 24 bits (1 * 3 * 8) and for two we have 48 bits (2 * 3 * 8 etc...
         int index = 0;
-        bool bits[numBits];
         for (int i = 0; i < numLEDs; ++i) {
             // Get the current color
             const Color& cur = colors[i];
@@ -203,18 +224,24 @@ public:
                 bits[index + 5] = ((curColor & 0B00000100) && 0B00000100); // bit 2
                 bits[index + 6] = ((curColor & 0B00000010) && 0B00000010); // bit 1
                 bits[index + 7] = ((curColor & 0B00000001) && 0B00000001); // bit 0 (lsb)
+
+                // Increment index by 8 for the next 8 bits
                 index += 8;
             } // End color bytes loop
         } // End leds loop
+    };
 
-
-        debugPrintStream(numBits, bits); // This is only done in debug modus, see the macro at the top of the file
-
-
-        // Send the data to the chip, this is done by setting the pins high and then low for a certain time
+    /**
+     * @brief Sends the data to the WS2812B strip
+     * @param numBits Length of bits array
+     * @param bits Array with bits that need to be send
+     */
+    void sendBits(const int& numBits, const bool bits[]) {
+        // The chip is controlled by sending 24 bits for every LED (3 bytes for every color)
+        // This is done by setting the pins high and then low for a certain time
         // Because this needs to be done insanely fast, we create small delays with inline asembly
-        // (which are defined macros in the header files)
-        // The chip is controlled by sending 24 bits for every LED (3 bytes for every color):
+        // (which are defined macros at the top of the file)
+        // The bits are in green red blue order
         // |G7|G6|G5|G4|G3|G2|G1|G0|R7|R6|R5|R4|R3|R2|R1|R0|B7|B6|B5|B4|B3|B2|B1|B0|
         //
         // | T0H | 0 code ,high voltage time | 0.4us      | ±150ns |
@@ -229,7 +256,7 @@ public:
         // | <---> | <---------> |    | <---------> | <---> |
         // |  T0H  |_____________|    |     T0L     |_______|
         // For more information see the datasheet (https://cdn-shop.adafruit.com/datasheets/WS2812B.pdf)
-        bool* p = bits;
+        const bool* p = bits;
         int n = numBits;
         do {
             if (*p++) {
@@ -245,8 +272,7 @@ public:
             }
         } while(--n);
     };
-};
+}; // End class
 
-}
-
+}; // End name space
 #endif // GLOW_WS2812B_STRIP_N_HPP
