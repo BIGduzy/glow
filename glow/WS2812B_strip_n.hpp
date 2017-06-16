@@ -128,7 +128,7 @@ public:
      */
     void clear() {
         for (int i = 0; i < numLEDs; ++i) {
-            colors[i] = Color(); // Colors default constructor had 0,0,0 RGB values
+            colors[i].clear();
         }
     };
 
@@ -139,7 +139,6 @@ public:
      * @details
      * Raises every rgb value for every LED pixel by given strength, the function clamps values at 255 so
      * there is no overflow
-     */
      */
     void brighten(const BYTE& strength = 1) {
         for (int i = 0; i < numLEDs; ++i) {

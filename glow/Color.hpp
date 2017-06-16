@@ -75,6 +75,19 @@ public:
     // END Getters & setters
     // *********************
 
+
+    /**
+     * @brief Clears the color
+     *
+     * @details
+     * Sets all RGB values to 0
+     */
+    void clear() {
+        red = 0;
+        blue = 0;
+        green = 0;
+    }
+
     /**
      * @brief Makes color brighter
      * @param strength How much to increase the brightness, 0 - 255
