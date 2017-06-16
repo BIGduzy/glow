@@ -11,3 +11,4 @@ update_codelite_workspace.bat
 *.ld
 *.map
 */bmptk*
+html/*

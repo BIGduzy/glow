@@ -5,6 +5,14 @@
 namespace glow {
 typedef unsigned char BYTE;
 
+
+/**
+ * @class Color
+ * @author Nick
+ * @date 16/06/2017
+ * @file Color.hpp
+ * @brief RGB Color class
+ */
 class Color {
 private:
     BYTE red = 0;
@@ -70,6 +78,10 @@ public:
     /**
      * @brief Makes color brighter
      * @param strength How much to increase the brightness, 0 - 255
+     *
+     * @details
+     * Raises every rgb value by given strenght, the function clamps values at 255 so
+     * there is no overflow
      */
     void brighten(const BYTE& strength = 1) {
         red = std::min(red + strength, 255); // Prevent overflow of variable
@@ -81,6 +93,10 @@ public:
     /**
      * @brief Makes color darker
      * @param strength How much to decrease the brightness, 0 - 255
+     *
+     * @details
+     * Lowers every rgb value by given strength, the function clamps values at 0 so
+     * there is no underflow
      */
     void darken(const BYTE& strength = 1) {
         red = std::max(red - strength, 0); // Prevent underflow of variable
@@ -90,6 +106,9 @@ public:
 
     /**
      * @brief Inverts color
+     *
+     * @details
+     * Inverts every rgb value, red becomes cyan, green becomes magenta etc
      */
     void invert() {
         // Invert every color byte with the bitwise NOT

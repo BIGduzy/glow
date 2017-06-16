@@ -36,7 +36,7 @@ typedef unsigned char BYTE;
  * @author Nick
  * @date 14/06/2017
  * @file WS2812B_strip_n.hpp
- * @brief template class for the WS2812B LED strip
+ * @brief Template class for the WS2812B LED strip
  */
 template<int NUMBER_OF_LEDS>
 class WS2812B_strip_n {
@@ -135,6 +135,11 @@ public:
     /**
      * @brief Makes the color of every LED pixel brighter
      * @param strength How much to increase the brightness, 0 - 255
+     *
+     * @details
+     * Raises every rgb value for every LED pixel by given strength, the function clamps values at 255 so
+     * there is no overflow
+     */
      */
     void brighten(const BYTE& strength = 1) {
         for (int i = 0; i < numLEDs; ++i) {
@@ -145,6 +150,10 @@ public:
     /**
      * @brief Makes the color of every LED pixel darker (less bright, since LEDs can't be black)
      * @param strength How much to decrease the brightness, 0 - 255
+     *
+     * @details
+     * Lowers every rgb value for every LED pixel by given strength, the function clamps values at 0 so
+     * there is no underflow
      */
     void darken(const BYTE& strength = 1) {
         for (int i = 0; i < numLEDs; ++i) {
@@ -154,6 +163,9 @@ public:
 
     /**
      * @brief Inverts the color of every LED pixel
+     *
+     * @details
+     * Inverts every rgb value for every LED pixel, red becomes cyan, green becomes magenta etc
      */
     void invert() {
         for (int i = 0; i < numLEDs; ++i) {
