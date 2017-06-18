@@ -11,6 +11,9 @@ namespace glow {
  * @date 16/06/2017
  * @file Color.hpp
  * @brief RGB Color class
+ *
+ * @details
+ * This class is used for RGB Color represetation and manipulation.
  */
 class Color {
 private:
@@ -18,7 +21,6 @@ private:
     uint8_t green = 0;
     uint8_t blue = 0;
 public:
-
     /**
      * @brief Default constructor
      *
@@ -35,10 +37,11 @@ public:
      * @param blue The red value, 0 - 255
      *
      * @details
-     * Sets rgb values
+     * Sets rgb values to the given values.
+     * Values are clamped between 0 - 255
      */
     Color(uint8_t red, uint8_t green, uint8_t blue):
-        red(red), green(green), blue(blue)
+        red(clamp(red)), green(clamp(green)), blue(clamp(blue))
     {};
 
     // *****************
@@ -127,6 +130,22 @@ public:
         red = ~red;
         green = ~green;
         blue = ~blue;
+    }
+
+
+// *****************
+// Private functions
+// *****************
+private:
+    /**
+     * @brief Clamps variable between min and max
+     * @param var The variable
+     * @param min The minimum value
+     * @param max The maximum value
+     * @return The clamped variable
+     */
+    int clamp(int var, int min = 0, int max = 255) {
+        return std::max(std::min(var, max), min);
     }
 };
 

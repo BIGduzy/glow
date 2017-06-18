@@ -36,6 +36,11 @@ namespace glow {
  * @date 14/06/2017
  * @file WS2812B_strip_n.hpp
  * @brief Template class for the WS2812B LED strip
+ *
+ * @details
+ * This class is dependant on hwlib for the arduino pin control.
+ * see: https://github.com/wovo/hwlib for more info.
+ * By default the class pin 6 but all digital pins can be used, just pass it to the constructor
  */
 template<int NUMBER_OF_LEDS>
 class WS2812B_strip_n {
@@ -69,7 +74,8 @@ public:
      * @param numLEDs the number of leds in the strip
      *
      * @details
-     * Sets data pin, the number of LEDs and then fills colors array with 0,0,0 RGB values
+     * Sets data pin, the number of LEDs and then fills colors array with 0,0,0 RGB values.
+     * All digital pins can be used.
      */
     WS2812B_strip_n(hwlib::target::pin_out dataPin):
         dataPin(dataPin),
@@ -103,7 +109,6 @@ public:
     Color getPixelColor(int index) const {
         return colors[index];
     };
-
     // *******************
     // END Getters/setters
     // *******************
@@ -274,4 +279,5 @@ private:
 }; // End class
 
 }; // End name space
+
 #endif // GLOW_WS2812B_STRIP_N_HPP
