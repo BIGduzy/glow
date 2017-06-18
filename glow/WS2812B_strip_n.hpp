@@ -22,7 +22,6 @@
 #endif
 
 namespace glow {
-typedef unsigned char BYTE;
 
 // High / low for a 0
 #define GLOW_WAIT_T0H() asm volatile("nop\n\t") // These are NOPS - these let us delay clock cycles for more precise timing
@@ -42,6 +41,8 @@ template<int NUMBER_OF_LEDS>
 class WS2812B_strip_n {
 private:
     /* The data pin */
+    // I know this is supposed to be and reference to the pin, but I forgot this when making the sendBits function.
+    // So if you make it a reference now the timing is off and the led strip won't receive 0's, thus making every LED pixel white
     hwlib::target::pin_out dataPin;
     /* The number of LEDs */
     int numLEDs = NUMBER_OF_LEDS;
@@ -91,7 +92,7 @@ public:
      * @param green The green value, 0 - 255
      * @param blue The red value, 0 - 255
      */
-    void setPixelColor(int index, BYTE red, BYTE green, BYTE blue) {
+    void setPixelColor(int index, uint8_t red, uint8_t green, uint8_t blue) {
         glow::Color& c = colors[index];
         c.setRed(red);
         c.setGreen(green);
@@ -140,7 +141,7 @@ public:
      * Raises every rgb value for every LED pixel by given strength, the function clamps values at 255 so
      * there is no overflow
      */
-    void brighten(const BYTE& strength = 1) {
+    void brighten(const uint8_t& strength = 1) {
         for (int i = 0; i < numLEDs; ++i) {
             colors[i].brighten(strength);
         }
@@ -154,7 +155,7 @@ public:
      * Lowers every rgb value for every LED pixel by given strength, the function clamps values at 0 so
      * there is no underflow
      */
-    void darken(const BYTE& strength = 1) {
+    void darken(const uint8_t& strength = 1) {
         for (int i = 0; i < numLEDs; ++i) {
             colors[i].darken(strength);
         }
@@ -214,7 +215,7 @@ private:
 
             // For all three bytes
             for (short j = 0; j < 3; ++j) {
-                BYTE curColor;
+                uint8_t curColor;
                 if (j % 3 == 0) { curColor = cur.getGreen(); } // First iteration is the green byte
                 else if (j % 3 == 1) { curColor = cur.getRed(); } // Second iteration is the red byte
                 else { curColor = cur.getBlue(); } // Thirth iteration is the blue byte

@@ -3,7 +3,6 @@
 #include <algorithm>
 
 namespace glow {
-typedef unsigned char BYTE;
 
 
 /**
@@ -15,9 +14,9 @@ typedef unsigned char BYTE;
  */
 class Color {
 private:
-    BYTE red = 0;
-    BYTE green = 0;
-    BYTE blue = 0;
+    uint8_t red = 0;
+    uint8_t green = 0;
+    uint8_t blue = 0;
 public:
 
     /**
@@ -38,7 +37,7 @@ public:
      * @details
      * Sets rgb values
      */
-    Color(BYTE red, BYTE green, BYTE blue):
+    Color(uint8_t red, uint8_t green, uint8_t blue):
         red(red), green(green), blue(blue)
     {};
 
@@ -48,29 +47,29 @@ public:
     /**
      * @brief Getter for red value
      */
-    inline BYTE getRed() const { return red; };
+    inline uint8_t getRed() const { return red; };
     /**
      * @brief Setter for red value
      */
-    inline void setRed(const BYTE& newValue) { red = newValue; };
+    inline void setRed(const uint8_t& newValue) { red = newValue; };
 
     /**
      * @brief Getter for green value
      */
-    inline BYTE getGreen() const { return green; };
+    inline uint8_t getGreen() const { return green; };
     /**
      * @brief Setter for red value
      */
-    inline void setGreen(const BYTE& newValue) { green = newValue; };
+    inline void setGreen(const uint8_t& newValue) { green = newValue; };
 
     /**
      * @brief Getter for green value
      */
-    inline BYTE getBlue() const { return blue; };
+    inline uint8_t getBlue() const { return blue; };
     /**
      * @brief Setter for red value
      */
-    inline void setBlue(const BYTE& newValue) { blue = newValue; };
+    inline void setBlue(const uint8_t& newValue) { blue = newValue; };
     // *********************
     // END Getters & setters
     // *********************
@@ -96,7 +95,7 @@ public:
      * Raises every rgb value by given strenght, the function clamps values at 255 so
      * there is no overflow
      */
-    void brighten(const BYTE& strength = 1) {
+    void brighten(const uint8_t& strength = 1) {
         red = std::min(red + strength, 255); // Prevent overflow of variable
         green = std::min(green + strength, 255); // Prevent overflow of variable
         blue = std::min(blue + strength, 255); // Prevent overflow of variable
@@ -111,7 +110,7 @@ public:
      * Lowers every rgb value by given strength, the function clamps values at 0 so
      * there is no underflow
      */
-    void darken(const BYTE& strength = 1) {
+    void darken(const uint8_t& strength = 1) {
         red = std::max(red - strength, 0); // Prevent underflow of variable
         green = std::max(green - strength, 0); // Prevent underflow of variable
         blue = std::max(blue - strength, 0); // Prevent underflow of variable
