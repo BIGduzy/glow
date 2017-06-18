@@ -85,19 +85,6 @@ public:
     // ***************
     // Getters/setters
     // ***************
-    /**
-     * @brief Sets The color for a single LED pixel
-     * @param index The index number of the LED pixel (we count from 0)
-     * @param red The red value, 0 - 255
-     * @param green The green value, 0 - 255
-     * @param blue The red value, 0 - 255
-     */
-    void setPixelColor(int index, uint8_t red, uint8_t green, uint8_t blue) {
-        glow::Color& c = colors[index];
-        c.setRed(red);
-        c.setGreen(green);
-        c.setBlue(blue);
-    };
 
     /**
      * @brief Sets the color for a single LED pixel
