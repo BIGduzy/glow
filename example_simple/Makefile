@@ -12,10 +12,10 @@
 SOURCES :=
 
 # header files in this project
-HEADERS := WS2812B_strip_n.hpp Color.hpp
+HEADERS := TCS230.hpp
 
 # other places to look for files for this project
-SEARCH  :=
+SEARCH  := glow
 
 # set RELATIVE to the next higher directory
 # and defer to the appropriate Makefile.* there
