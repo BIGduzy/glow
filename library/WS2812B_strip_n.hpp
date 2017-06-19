@@ -50,7 +50,7 @@ private:
     // So if you make it a reference now the timing is off and the led strip won't receive 0's, thus making every LED pixel white
     hwlib::target::pin_out dataPin;
     /* The number of LEDs */
-    int numLEDs = NUMBER_OF_LEDS;
+    unsigned numLEDs = NUMBER_OF_LEDS;
     /* Array with color objects containing the color data for every LED */
     Color colors[NUMBER_OF_LEDS];
 
@@ -77,7 +77,7 @@ public:
      * Sets data pin, the number of LEDs and then fills colors array with 0,0,0 RGB values.
      * All digital pins can be used.
      */
-    WS2812B_strip_n(hwlib::target::pin_out dataPin):
+    WS2812B_strip_n(const hwlib::target::pin_out& dataPin):
         dataPin(dataPin),
         numLEDs(NUMBER_OF_LEDS)
     {
@@ -97,7 +97,7 @@ public:
      * @param index The index number of the LED pixel (we count from 0)
      * @param color glow::Color Object with RGB values
      */
-    void setPixelColor(int index, const Color& color) {
+    void setPixelColor(unsigned index, const Color& color) {
         colors[index] = color;
     };
 
@@ -106,7 +106,7 @@ public:
      * @param index The index number of the LED pixel (we count from 0)
      * @return Object with the RGB values
      */
-    Color getPixelColor(int index) const {
+    Color getPixelColor(unsigned index) const {
         return colors[index];
     };
     // *******************
@@ -120,7 +120,7 @@ public:
      * Loops through every color in the color array and sets the RGB values to 0,0,0
      */
     void clear() {
-        for (int i = 0; i < numLEDs; ++i) {
+        for (unsigned i = 0; i < numLEDs; ++i) {
             colors[i].clear();
         }
     };
@@ -134,7 +134,7 @@ public:
      * there is no overflow
      */
     void brighten(const uint8_t& strength = 1) {
-        for (int i = 0; i < numLEDs; ++i) {
+        for (unsigned i = 0; i < numLEDs; ++i) {
             colors[i].brighten(strength);
         }
     };
@@ -148,7 +148,7 @@ public:
      * there is no underflow
      */
     void darken(const uint8_t& strength = 1) {
-        for (int i = 0; i < numLEDs; ++i) {
+        for (unsigned i = 0; i < numLEDs; ++i) {
             colors[i].darken(strength);
         }
     };
@@ -160,7 +160,7 @@ public:
      * Inverts every rgb value for every LED pixel, red becomes cyan, green becomes magenta etc
      */
     void invert() {
-        for (int i = 0; i < numLEDs; ++i) {
+        for (unsigned i = 0; i < numLEDs; ++i) {
             colors[i].invert();
         }
     };
@@ -174,8 +174,8 @@ public:
      */
     void update() {
         // Every led has 3 bytes, green, red and blue (the WS2812B is in GRB order instead of RGB)
-        int numBytes = numLEDs * 3;
-        int numBits = numBytes * 8;
+        unsigned numBytes = numLEDs * 3;
+        unsigned numBits = numBytes * 8;
 
         // We first add the values of every bit to an array, this can't be done in the for loop that sets the pins
         // because we don't have the time for that
@@ -200,8 +200,8 @@ private:
     void setBits(bool bits[]) {
         // We loop through every led and then add every bit in the three color bytes to the bits array,
         // So for one led we have 24 bits (1 * 3 * 8) and for two we have 48 bits (2 * 3 * 8 etc...
-        int index = 0;
-        for (int i = 0; i < numLEDs; ++i) {
+        unsigned index = 0;
+        for (unsigned i = 0; i < numLEDs; ++i) {
             // Get the current color
             const Color& cur = colors[i];
 
@@ -240,7 +240,7 @@ private:
      * @param numBits Length of bits array
      * @param bits Array with bits that need to be send
      */
-    void sendBits(const int& numBits, const bool bits[]) {
+    void sendBits(const unsigned& numBits, const bool bits[]) {
         // The chip is controlled by sending 24 bits for every LED (3 bytes for every color)
         // This is done by setting the pins high and then low for a certain time
         // Because this needs to be done insanely fast, we create small delays with inline asembly
@@ -261,7 +261,7 @@ private:
         // |  T0H  |_____________|    |     T0L     |_______|
         // For more information see the datasheet (https://cdn-shop.adafruit.com/datasheets/WS2812B.pdf)
         const bool* p = bits;
-        int n = numBits;
+        unsigned n = numBits;
         do {
             if (*p++) {
                 dataPin.set(1);
