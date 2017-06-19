@@ -91,7 +91,6 @@ public:
     // ***************
     // Getters/setters
     // ***************
-
     /**
      * @brief Sets the color for a single LED pixel
      * @param index The index number of the LED pixel (we count from 0)
@@ -108,6 +107,10 @@ public:
      */
     Color getPixelColor(unsigned index) const {
         return colors[index];
+    };
+
+    unsigned getNumLeds() {
+        return numLEDs;
     };
     // *******************
     // END Getters/setters

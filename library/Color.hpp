@@ -132,6 +132,17 @@ public:
         blue = ~blue;
     }
 
+    // *********
+    // Operators
+    // *********
+    bool operator==(const Color& rhs) const {
+        return (
+            red == rhs.red &&
+            green == rhs.green &&
+            blue == rhs.blue
+        );
+    };
+
 
 // *****************
 // Private functions
