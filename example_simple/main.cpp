@@ -1,5 +1,5 @@
 #include <hwlib.hpp>
-#include "../library/WS2812B_strip_n.hpp"
+#include <WS2812B_strip_n.hpp>
 #include <math.h>
 
 int main( void ) {

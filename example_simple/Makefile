@@ -15,7 +15,7 @@ SOURCES :=
 HEADERS := TCS230.hpp
 
 # other places to look for files for this project
-SEARCH  := glow
+SEARCH  := ../library
 
 # set RELATIVE to the next higher directory
 # and defer to the appropriate Makefile.* there
