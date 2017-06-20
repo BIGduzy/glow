@@ -12,7 +12,7 @@
 SOURCES :=
 
 # header files in this project
-HEADERS :=
+HEADERS := TCS230.hpp
 
 # other places to look for files for this project
 SEARCH  := ../library
