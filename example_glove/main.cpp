@@ -1,3 +1,18 @@
+// ==========================================================================
+//
+// File      : main.cpp
+// Part of   : C++ Glow, Lightweight WS2812B LED strip library
+// Author    : Nick Bout
+// Github    : https://github.com/BIGduzy/glow
+// Copyright : nick.bout@student.hu.nl 2017
+//
+// Distributed under the Boost Software License, Version 1.0.
+// (See accompanying file LICENSE_1_0.txt or copy at
+// http://www.boost.org/LICENSE_1_0.txt)
+//
+// ==========================================================================
+
+
 #include <hwlib.hpp>
 #include <WS2812B_strip_n.hpp>
 #include <math.h>

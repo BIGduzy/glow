@@ -1,20 +1,23 @@
+// ==========================================================================
+//
+// File      : Color.hpp
+// Part of   : C++ Glow, Lightweight WS2812B LED strip library
+// Author    : Nick Bout
+// Github    : https://github.com/BIGduzy/glow
+// Copyright : nick.bout@student.hu.nl 2017
+//
+// Distributed under the Boost Software License, Version 1.0.
+// (See accompanying file LICENSE_1_0.txt or copy at
+// http://www.boost.org/LICENSE_1_0.txt)
+//
+// ==========================================================================
+
 #ifndef GLOW_COLOR_HPP
 #define GLOW_COLOR_HPP
 #include <algorithm>
 
 namespace glow {
 
-
-/**
- * @class Color
- * @author Nick
- * @date 16/06/2017
- * @file Color.hpp
- * @brief RGB Color class
- *
- * @details
- * This class is used for RGB Color represetation and manipulation.
- */
 class Color {
 private:
     uint8_t red = 0;
