@@ -46,8 +46,10 @@ template<int NUMBER_OF_LEDS>
 class WS2812B_strip_n {
 private:
     /* The data pin */
-    // I know this is supposed to be and reference to the pin, but I forgot this when making the sendBits function.
-    // So if you make it a reference now the timing is off and the led strip won't receive 0's, thus making every LED pixel white
+    // I know this is supposed to be and reference to the pin, but when I make it an reference we won't be able to get the required speed.
+    // This is because the compiler is not smart enough to optimise in the same way as when its not a reference.
+    // Because of this the time for sending a 0 (see the sendBits function) goes from 400ns to 2000ns, meaning that
+    // even if remove the wait between set(1) and set(0) the duration is still to long.
     hwlib::target::pin_out dataPin;
     /* The number of LEDs */
     unsigned numLEDs = NUMBER_OF_LEDS;
@@ -97,7 +99,7 @@ public:
      * @param color glow::Color Object with RGB values
      */
     void setPixelColor(unsigned index, const Color& color) {
-        colors[index] = color;
+        if (index < numLEDs) colors[index] = color;
     };
 
     /**
@@ -106,6 +108,7 @@ public:
      * @return Object with the RGB values
      */
     Color getPixelColor(unsigned index) const {
+        if (index > numLEDs - 1) index = numLEDs - 1;
         return colors[index];
     };
 
