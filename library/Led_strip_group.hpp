@@ -111,6 +111,19 @@ public:
     };
 
     /**
+     * @brief Set the color of every pixel in every strip
+     * @param color glow::Color Object with RGB values
+     */
+    inline void setPixelColorAll(const Color& color) {
+        for (uint8_t i = 0; i < numStrips; ++i) {
+            Led_strip& cur = *(strips[i]);
+            for (unsigned j = 0; j < cur.getNumLeds(); ++j) {
+                cur.setPixelColor(j, color);
+            }
+        }
+    }
+
+    /**
      * @brief Returns the color for a single LED pixel
      * @param index The index number of the LED pixel (we count from 0)
      * @return Object with the RGB values
