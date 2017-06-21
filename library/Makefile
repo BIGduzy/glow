@@ -12,7 +12,7 @@
 SOURCES :=
 
 # header files in this project
-HEADERS := WS2812B_strip_n.hpp Color.hpp
+HEADERS := Led_strip.hpp Led_strip_dummy.hpp Led_strip_group.hpp WS2812B_strip_n.hpp Color.hpp
 
 # other places to look for files for this project
 SEARCH  :=

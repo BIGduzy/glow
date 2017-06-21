@@ -18,6 +18,7 @@
 #include <hwlib.hpp>
 #include "Color.hpp"
 #include "config.hpp"
+#include "Led_strip.hpp"
 
 // Only print in debug modus
 #if DEBUG
@@ -57,7 +58,7 @@ namespace glow {
  * By default the class pin 6 but all digital pins can be used, just pass it to the constructor
  */
 template<int NUMBER_OF_LEDS>
-class WS2812B_strip_n {
+class WS2812B_strip_n : public Led_strip {
 private:
     /* The data pin */
     // I know this is supposed to be and reference to the pin, but when I make it an reference we won't be able to get the required speed.
@@ -66,7 +67,7 @@ private:
     // even if remove the wait between set(1) and set(0) the duration is still to long.
     hwlib::target::pin_out dataPin;
     /* The number of LEDs */
-    unsigned numLEDs = NUMBER_OF_LEDS;
+    unsigned numLEDs;
     /* Array with color objects containing the color data for every LED */
     Color colors[NUMBER_OF_LEDS];
 
@@ -112,7 +113,7 @@ public:
      * @param index The index number of the LED pixel (we count from 0)
      * @param color glow::Color Object with RGB values
      */
-    void setPixelColor(unsigned index, const Color& color) {
+    inline void setPixelColor(unsigned index, const Color& color) override {
         if (index < numLEDs) colors[index] = color;
     };
 
@@ -121,12 +122,16 @@ public:
      * @param index The index number of the LED pixel (we count from 0)
      * @return Object with the RGB values
      */
-    Color getPixelColor(unsigned index) const {
+    inline Color getPixelColor(unsigned index) const override {
         if (index > numLEDs - 1) index = numLEDs - 1;
         return colors[index];
     };
 
-    unsigned getNumLeds() {
+    /**
+     * @brief Getter for number of leds
+     * @return number of leds
+     */
+    inline unsigned getNumLeds() const override {
         return numLEDs;
     };
     // *******************
@@ -139,7 +144,7 @@ public:
      * @details
      * Loops through every color in the color array and sets the RGB values to 0,0,0
      */
-    void clear() {
+    void clear() override {
         for (unsigned i = 0; i < numLEDs; ++i) {
             colors[i].clear();
         }
@@ -153,7 +158,7 @@ public:
      * Raises every rgb value for every LED pixel by given strength, the function clamps values at 255 so
      * there is no overflow
      */
-    void brighten(const uint8_t& strength = 1) {
+    void brighten(const uint8_t& strength = 1) override {
         for (unsigned i = 0; i < numLEDs; ++i) {
             colors[i].brighten(strength);
         }
@@ -167,7 +172,7 @@ public:
      * Lowers every rgb value for every LED pixel by given strength, the function clamps values at 0 so
      * there is no underflow
      */
-    void darken(const uint8_t& strength = 1) {
+    void darken(const uint8_t& strength = 1) override {
         for (unsigned i = 0; i < numLEDs; ++i) {
             colors[i].darken(strength);
         }
@@ -179,7 +184,7 @@ public:
      * @details
      * Inverts every rgb value for every LED pixel, red becomes cyan, green becomes magenta etc
      */
-    void invert() {
+    void invert() override {
         for (unsigned i = 0; i < numLEDs; ++i) {
             colors[i].invert();
         }
@@ -192,7 +197,7 @@ public:
      * @details
      * Calculates the bits that need to be send (based on color) and then sends the bits to te WS2812B strip
      */
-    void update() {
+    void update() override {
         // Every led has 3 bytes, green, red and blue (the WS2812B is in GRB order instead of RGB)
         unsigned numBytes = numLEDs * 3;
         unsigned numBits = numBytes * 8;
