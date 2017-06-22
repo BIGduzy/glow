@@ -13,4 +13,4 @@ In the example folders you find code samples on how to use the library.
 For doxumentation run `doxygen doxyfiles/doxyfile` (requires doxygen: http://www.stack.nl/~dimitri/doxygen/) in the main folder.
 Then open the index.html in the html folder.
 
-![Glow poster](poster.png)
+![Glow poster](Poster.png)
