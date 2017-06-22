@@ -83,7 +83,6 @@ public:
     glow::Color getColor(unsigned sampleTime = 50000) {
         // Set scaling
         setScale(mode);
-        hwlib::wait_ms(1); // Wait a bit for the sensor to turn on
 
         // Set filter to red and then measure frequency
         setFilter(COLOR_MODES::RED);
@@ -182,10 +181,9 @@ private:
         if (mode == SCALING_MODES::LOW || mode == SCALING_MODES::HIGH) s0_on = true;
         if (mode == SCALING_MODES::MEDIUM || mode == SCALING_MODES::HIGH) s1_on = true;
 
-        hwlib::cout << "s0: " << s0_on << " s1: " << s1_on << hwlib::endl;
-
         s0.set(s0_on);
         s1.set(s1_on);
+        hwlib::wait_ms(10); // Wait a bit for the sensor to turn on
     }
 
     /**
@@ -207,10 +205,9 @@ private:
         if (mode == COLOR_MODES::CLEAR || mode == COLOR_MODES::GREEN) s2_on = true;
         if (mode == COLOR_MODES::BLUE || mode == COLOR_MODES::GREEN)  s3_on = true;
 
-        hwlib::cout << "s2: " << s2_on << " s3: " << s3_on << hwlib::endl;
-
         s2.set(s2_on);
         s3.set(s3_on);
+        hwlib::wait_ms(10); // Wait a bit for the sensor to turn on
     }
 };
 

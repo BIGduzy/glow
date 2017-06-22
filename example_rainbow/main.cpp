@@ -25,32 +25,40 @@ int main( void ) {
     // kill the watchdog
     WDT->WDT_MR = WDT_MR_WDDIS;
 
-    // Create the datapin
+    // Create the datapins
     auto dataPin = hwlib::target::pin_out(hwlib::target::pins::d30);
+    auto dataPin1 = hwlib::target::pin_out(hwlib::target::pins::d31);
+    auto dataPin2 = hwlib::target::pin_out(hwlib::target::pins::d32);
+    auto dataPin3 = hwlib::target::pin_out(hwlib::target::pins::d33);
 
-    // Make ledstrip object with 11 leds
-    const int numLeds = 11;
-    glow::WS2812B_strip_n<numLeds> ledStrip(dataPin);
+    // Create led strips
+    glow::WS2812B_strip_n<9> pinkyFinger(dataPin);
+    glow::WS2812B_strip_n<11> ringFinger(dataPin2);
+    glow::WS2812B_strip_n<11> middleFinger(dataPin3);
+    glow::WS2812B_strip_n<11> indexFinger(dataPin1);
+
+    // Create group of led strips
+    glow::Led_strip_group stripClub(pinkyFinger, ringFinger, indexFinger, middleFinger);
 
     while(true) {
-        for (uint8_t j = 0; j < numLeds; j++) {
-            ledStrip.setPixelColor(j, glow::Color(0, 255, 255));
-            ledStrip.update();
+        for (uint8_t j = 0; j < stripClub.getNumLeds(); j++) {
+            stripClub.setPixelColor(j, glow::Color(0, 255, 255));
+            stripClub.update();
             hwlib::wait_ms(40);
         }
 
-        for (uint8_t i = 0; i < numLeds; i++) {
+        for (uint8_t i = 0; i < stripClub.getNumLeds(); i++) {
             uint8_t red = sin(6 * i + 0) * 127 + 128;
             uint8_t green = sin(6 * i + 2) * 127 + 128;
             uint8_t blue = sin(6 * i + 4) * 127 + 128;
-            ledStrip.setPixelColor(i, glow::Color(red, green, blue));
-            ledStrip.update();
+            stripClub.setPixelColor(i, glow::Color(red, green, blue));
+            stripClub.update();
             hwlib::wait_ms(40);
         }
 
-        for (uint8_t j = 0; j < numLeds; j++) {
-            ledStrip.setPixelColor(j, glow::Color(0, 0, 255));
-            ledStrip.update();
+        for (uint8_t j = 0; j < stripClub.getNumLeds(); j++) {
+            stripClub.setPixelColor(j, glow::Color(0, 0, 255));
+            stripClub.update();
             hwlib::wait_ms(40);
         }
     }

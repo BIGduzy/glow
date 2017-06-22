@@ -51,71 +51,55 @@ int main( void ) {
     TCS230 cs(colorDataPin, s0, s1, s2, s3);
     cs.setMode(SCALING_MODES::MEDIUM);
 
+    unsigned i = 0;
+    unsigned min = 0;
+    bool dir = 1;
+    glow::Color oldColor;
     while(true) {
-
+        // GET the color
         glow::Color color = cs.getColor();
         hwlib::cout << "(" << (unsigned)color.getRed() << ", ";
         hwlib::cout << (unsigned)color.getGreen() << ", ";
         hwlib::cout << (unsigned)color.getBlue() << ")";
         hwlib::cout << hwlib::endl;
 
+        // Modify color so we can see it better in the glove
         if (color.getRed() < 40 && color.getGreen() < 40 && color.getBlue() < 40) {
             // TODO: set random color
-            color.setRed(0);
-            color.setGreen(0);
-            color.setBlue(0);
+            color = oldColor;
         } else if (color.getRed() > color.getGreen() && color.getRed() > color.getBlue()) {
+            color.darken(50); // Set other colors darker to make red stand out more
             color.setRed(255);
-            color.setGreen(0);
-            color.setBlue(0);
         } else if (color.getBlue() > color.getRed() && color.getBlue() > color.getGreen()) {
+            color.darken(50); // Set other colors darker to make blue stand out more
             color.setBlue(255);
-            color.setRed(0);
-            color.setGreen(0);
         } else {
+            color.darken(50); // Set other colors darker to make green stand out more
             color.setGreen(255);
-            color.setRed(0);
-            color.setBlue(0);
         }
-//        hwlib::cout << "(" << (unsigned)c.getRed() << ", ";
-//        hwlib::cout << (unsigned)c.getGreen() << ", ";
-//        hwlib::cout << (unsigned)c.getBlue() << ")";
-//        hwlib::cout << hwlib::endl;
+        oldColor = color;
 
-//        stripClub.setPixelColor(1, c);
-//        stripClub.setPixelColor(3, c);
-//        stripClub.setPixelColor(5, c);
-//        stripClub.setPixelColor(7, c);
-//        stripClub.setPixelColor(9, c);
 
-        for (unsigned i = 0; i < stripClub.getNumLeds()-3; i++) {
-            stripClub.setPixelColor(i, glow::Color(0, 0, 0));
-            stripClub.setPixelColor(i + 3, color);
-            stripClub.setPixelColor(i + 2, color);
-            stripClub.setPixelColor(i + 1, color);
-            stripClub.update();
-            hwlib::wait_ms(100);
-        }
-        for (unsigned i = stripClub.getNumLeds(); i >= 3; i--) {
-            if (i > 0) {
-                stripClub.setPixelColor(i, glow::Color(0, 0, 0));
-            }
-            stripClub.setPixelColor(i - 3, color);
-            stripClub.setPixelColor(i - 2, color);
-            stripClub.setPixelColor(i - 1, color);
-            stripClub.update();
-            hwlib::wait_ms(100);
+        // When i is max or minimum invert the direction
+        if ((dir && i == stripClub.getNumLeds() - 4) || (!dir && i == min)) {
+            dir = !dir;
         }
 
-//        pinkyFinger.update();
-////        stripClub.update();
-//        hwlib::wait_ms(100);
-//        ringFinger.update();
-//        hwlib::wait_ms(100);
-//        middleFinger.update();
-//        hwlib::wait_ms(100);
-//        indexFinger.update();
-//        hwlib::wait_ms(100);
+        // Increase of decrease i based on direction
+        if (dir) ++i;
+        else  --i;
+
+        // Create kitt patern
+        stripClub.setPixelColor(i, color);
+        stripClub.setPixelColor(i + 1, color);
+        stripClub.setPixelColor(i + 2, color);
+
+        // Render the LED strips
+        stripClub.update();
+        // Turn every pixel off
+        stripClub.clear();
+
+        // Wait 0.1 sec
+        hwlib::wait_ms(100);
     }
-
 }
