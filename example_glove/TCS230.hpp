@@ -3,7 +3,7 @@
 // File      : TC230.cpp
 // Part of   : C++ Glow, Lightweight WS2812B LED strip library
 // Author    : Nick Bout
-// Author    : Nono van Galen
+// Author    : Nino van Galen
 // Github    : https://github.com/BIGduzy/glow
 // Copyright : nick.bout@student.hu.nl 2017
 //
