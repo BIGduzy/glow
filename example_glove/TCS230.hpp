@@ -46,7 +46,6 @@ private:
     unsigned maxGreen = 0;
     unsigned maxBlue = 0;
 public:
-    //Create a colour_sensor object, installed pins get set to 0 by default.
     TCS230(
         hwlib::target::pin_in& dataPin,
         hwlib::target::pin_out& s0,
@@ -135,7 +134,7 @@ public:
         auto currentTime = hwlib::now_us();
         bool state = dataPin.get();
 
-        // Loop for a sertan time (default 50.000us)
+        // Loop for a certain time (default 50.000us)
         while( ( currentTime - start ) < sampleTime) {
             if(state != dataPin.get()) {
                 state = !state;
